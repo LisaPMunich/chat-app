@@ -16,10 +16,10 @@ export default function Start(props) {
 
     // create color objects to set backgroundColor with press on colorButtons
     const colors = {
-        black: '#090C08',
-        lilac: '#474056',
-        grey: '#8A95A5',
-        sage: '#B9C6AE'
+        cornflower: '#797EF6',
+        viking: '#4ADEDE',
+        blue: '#1AA7EC',
+        purple: '#1E2F97'
     }
 
     return (
@@ -29,7 +29,7 @@ export default function Start(props) {
                 resizeMode='cover'
                 style={styles.image}
             >
-                <Text style={styles.title}>Chatty Betty</Text>
+                <Text style={styles.title} accessibilityRole='header'>Chatty Betty</Text>
                 <View style={styles.loginBox}>
                     {/*User can enter his name*/}
                     <TextInput
@@ -38,36 +38,59 @@ export default function Start(props) {
                         value={name}
                         left={<TextInput.Icon name="account-outline"/>}
                         placeholder='Your Name'
+                        accessibilityLabel='Please type in your name'
                     />
                     {/*User can choose background color for the chat screen*/}
                     <View style={styles.choiceTextWrapper}>
-                        <Text style={styles.choiceText}>
+                        <Text style={styles.choiceText} accessibilityRole='text'>
                             Choose Background Color:
                         </Text>
                     </View>
-                    <View style={styles.colorButtonWrapper} >
+                    <View
+                        style={styles.colorButtonWrapper} accessibilityRole='radio group'>
                         <TouchableOpacity
                             style={styles.colorButton1}
-                            onPress={(color) => setColor(colors.black)}
+                            onPress={(color) => setColor(colors.cornflower)}
+                            accessible={true}
+                            accessibilityRole='radio'
+                            accessibilityLabel='Tap me to select color'
+                            accessibilityHint='By tapping you choose the background color of chat screen'
                         />
                         <TouchableOpacity
                             style={styles.colorButton2}
-                            onPress={(color) => setColor(colors.lilac)}
+                            onPress={(color) => setColor(colors.viking)}
+                            accessible={true}
+                            accessibilityRole='radio'
+                            accessibilityLabel='Tap me to select color'
+                            accessibilityHint='By tapping you choose the background color of chat screen'
                         />
                         <TouchableOpacity
                             style={styles.colorButton3}
-                            onPress={(color) => setColor(colors.grey)}
+                            onPress={(color) => setColor(colors.blue)}
+                            accessible={true}
+                            accessibilityRole='radio'
+                            accessibilityLabel='Tap me to select color'
+                            accessibilityHint='By tapping you choose the background color of chat screen'
                         />
                         <TouchableOpacity
                             style={styles.colorButton4}
-                            onPress={(color) => setColor(colors.sage)}
+                            onPress={(color) => setColor(colors.purple)}
+                            accessible={true}
+                            accessibilityRole='radio'
+                            accessibilityLabel='Tap me to select color'
+                            accessibilityHint='By tapping you choose the background color of chat screen'
                         />
                     </View>
                     {/*Pressing button navigates to Chat Screen, transferring props name and set backgroundColor*/}
                     <Pressable
                         style={styles.button}
-                        onPress={() => props.navigation.navigate('Chat', {name: name, color: color})}>
-                        <Text style={styles.buttonText}>
+                        onPress={() => props.navigation.navigate('Chat', {name: name, color: color})}
+                        accessible={true}
+                        accessibilityRole='button'
+                        accessibilityLabel='Press me to navigate to chat screen'
+                        accessibilityHint='By pressing the button you are redirected to the chat screen'
+                    >
+                        <Text style={styles.buttonText} accessibilityRole='text'>
                             Start Chatting
                         </Text>
                     </Pressable>
@@ -94,6 +117,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#FFFFFF',
         textAlign: 'center',
+        justifyContent: 'center',
         paddingTop: 120,
     },
     loginBox: {
@@ -132,21 +156,21 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
     },
     colorButton1: {
-        backgroundColor: '#090C08',
+        backgroundColor: '#797EF6',
         width: 50,
         height: 50,
         borderRadius: '50%',
         marginLeft: '5%',
     },
     colorButton2: {
-        backgroundColor: '#474056',
+        backgroundColor: '#4ADEDE',
         width: 50,
         height: 50,
         borderRadius: '50%',
         marginLeft: '5%',
     },
     colorButton3: {
-        backgroundColor: '#8A95A5',
+        backgroundColor: '#1AA7EC',
         width: 50,
         height: 50,
         borderRadius: '50%',
@@ -154,7 +178,7 @@ const styles = StyleSheet.create({
 
     },
     colorButton4: {
-        backgroundColor: '#B9C6AE',
+        backgroundColor: '#1E2F97',
         width: 50,
         height: 50,
         borderRadius: '50%',
