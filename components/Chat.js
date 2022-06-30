@@ -5,7 +5,11 @@ import {GiftedChat, Bubble, MessageText, Time} from 'react-native-gifted-chat'
 export default function Chat(props) {
     const [messages, setMessages] = useState([]); //state to hold messages
 
-    useEffect(() => {
+    {/* Receive props name and color from the Start Screen*/}
+    const {color} = props.route.params;
+    const {name} = props.route.params;
+
+    useEffect((props) => {
         setMessages([
             {
                 _id: 1,
@@ -13,7 +17,7 @@ export default function Chat(props) {
                 createdAt: new Date(),
                 user: {
                     _id: 2,
-                    name: 'React Native',
+                    name: 'Merle',
                     avatar: 'https://placeimg.com/140/140/any',
                 },
                 sent: true,
@@ -22,7 +26,7 @@ export default function Chat(props) {
             },
             {
                 _id: 2,
-                text: 'This is a system message',
+                text: `${name} entered the chat`,
                 createdAt: new Date(),
                 system: true,
             },
@@ -34,9 +38,7 @@ export default function Chat(props) {
     }, [])
 
 
-    {/* Receive props name and color from the Start Screen*/}
-    const {color} = props.route.params;
-    const {name} = props.route.params;
+
 
     function renderBubble(props) {
         return (
@@ -46,9 +48,11 @@ export default function Chat(props) {
                 wrapperStyle={{
                     left: {
                         backgroundColor: '#E0CDEE',
+                        padding: 5,
                     },
                     right: {
                         backgroundColor: '#D8ECEE',
+                        padding: 5
                     }
                 }}
                 // Change font color of text in bubbles
@@ -59,17 +63,11 @@ export default function Chat(props) {
                             textStyle={{
                                 left: {
                                     color: '#000',
-                                    paddingTop: 5,
-                                    paddingRight: 5,
-                                    paddingLeft: 5,
                                     fontSize: 15,
                                     fontWeight: '400',
                                 },
                                 right: {
                                     color: '#000',
-                                    paddingTop: 5,
-                                    paddingRight: 5,
-                                    paddingLeft: 5,
                                     fontSize: 15,
                                     fontWeight: '400',
                                 },
@@ -85,13 +83,11 @@ export default function Chat(props) {
                             timeTextStyle={{
                                 left: {
                                     color: '#707070',
-                                    padding: 5,
                                     fontSize: 10,
                                     textAlign: 'right',
                                 },
                                 right: {
                                     color: '#707070',
-                                    padding: 5,
                                     fontSize: 10,
                                     textAlign: 'right',
                                 },
@@ -111,7 +107,7 @@ export default function Chat(props) {
                 onSend={messages => onSend(messages)}
                 user={{
                     _id: 1,
-                    name: 'React Native',
+                    name: 'Merle',
                     avatar: 'https://placeimg.com/140/140/any',
                 }}
                 renderBubble={renderBubble}
