@@ -47,12 +47,12 @@ export default function Chat(props) {
                 // Change background color of bubbles
                 wrapperStyle={{
                     left: {
-                        backgroundColor: '#E0CDEE',
-                        padding: 5,
+                        backgroundColor: '#FFF',
+                        padding: 8,
                     },
                     right: {
-                        backgroundColor: '#D8ECEE',
-                        padding: 5
+                        backgroundColor: '#BDE2EF',
+                        padding: 8,
                     }
                 }}
                 // Change font color of text in bubbles

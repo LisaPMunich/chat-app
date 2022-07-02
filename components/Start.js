@@ -8,7 +8,7 @@ You can use the default font rather than implementing a custom font.
 import React, {useState} from 'react';
 import {ImageBackground, StyleSheet, View, Text, TouchableOpacity, Pressable} from 'react-native';
 import {TextInput} from "react-native-paper";
-import image from "../assets/background-image.png";
+import image from "../assets/chattybetty_backgroundImage_blue.png";
 
 export default function Start(props) {
     const [name, setName] = useState('');
@@ -16,10 +16,11 @@ export default function Start(props) {
 
     // create color objects to set backgroundColor with press on colorButtons
     const colors = {
-        cornflower: '#797EF6',
-        viking: '#4ADEDE',
-        blue: '#1AA7EC',
-        purple: '#1E2F97'
+        orange: '#D38333',
+        red: '#D47C76',
+        blue: '#91acd9',
+        cascara: '#F03E33',
+        lionheart:'#CF1C1E'
     }
 
     return (
@@ -38,6 +39,8 @@ export default function Start(props) {
                         value={name}
                         left={<TextInput.Icon name="account-outline"/>}
                         placeholder='Your Name'
+                        accessible={true}
+                        accessiblityHint='Type in your name into the input field to customize your chat screen'
                         accessibilityLabel='Please type in your name'
                     />
                     {/*User can choose background color for the chat screen*/}
@@ -50,7 +53,7 @@ export default function Start(props) {
                         style={styles.colorButtonWrapper} accessibilityRole='radio group'>
                         <TouchableOpacity
                             style={styles.colorButton1}
-                            onPress={(color) => setColor(colors.cornflower)}
+                            onPress={(color) => setColor(colors.orange)}
                             accessible={true}
                             accessibilityRole='radio'
                             accessibilityLabel='Tap me to select color'
@@ -58,7 +61,7 @@ export default function Start(props) {
                         />
                         <TouchableOpacity
                             style={styles.colorButton2}
-                            onPress={(color) => setColor(colors.viking)}
+                            onPress={(color) => setColor(colors.red)}
                             accessible={true}
                             accessibilityRole='radio'
                             accessibilityLabel='Tap me to select color'
@@ -74,7 +77,15 @@ export default function Start(props) {
                         />
                         <TouchableOpacity
                             style={styles.colorButton4}
-                            onPress={(color) => setColor(colors.purple)}
+                            onPress={(color) => setColor(colors.cascara)}
+                            accessible={true}
+                            accessibilityRole='radio'
+                            accessibilityLabel='Tap me to select color'
+                            accessibilityHint='By tapping you choose the background color of chat screen'
+                        />
+                        <TouchableOpacity
+                            style={styles.colorButton5}
+                            onPress={(color) => setColor(colors.lionheart)}
                             accessible={true}
                             accessibilityRole='radio'
                             accessibilityLabel='Tap me to select color'
@@ -115,10 +126,10 @@ const styles = StyleSheet.create({
         width: '88%',
         fontSize: 45,
         fontWeight: '600',
-        color: '#FFFFFF',
+        color: '#CF1C1E',
         textAlign: 'center',
         justifyContent: 'center',
-        paddingTop: 120,
+        paddingTop: 100,
     },
     loginBox: {
         backgroundColor: '#FFF',
@@ -156,29 +167,36 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
     },
     colorButton1: {
-        backgroundColor: '#797EF6',
+        backgroundColor: '#D38333',
         width: 50,
         height: 50,
         borderRadius: '50%',
         marginLeft: '5%',
     },
     colorButton2: {
-        backgroundColor: '#4ADEDE',
+        backgroundColor: '#D47C76',
         width: 50,
         height: 50,
         borderRadius: '50%',
         marginLeft: '5%',
     },
     colorButton3: {
-        backgroundColor: '#1AA7EC',
+        backgroundColor: '#91acd9',
+        width: 50,
+        height: 50,
+        borderRadius: '50%',
+        marginLeft: '5%',
+    },
+    colorButton4: {
+        backgroundColor: '#F03E33',
         width: 50,
         height: 50,
         borderRadius: '50%',
         marginLeft: '5%',
 
     },
-    colorButton4: {
-        backgroundColor: '#1E2F97',
+    colorButton5: {
+        backgroundColor: '#CE1C1E',
         width: 50,
         height: 50,
         borderRadius: '50%',
@@ -187,8 +205,8 @@ const styles = StyleSheet.create({
     button: {
         width: '88%',
         height: 60,
-        backgroundColor: '#757083',
-        borderColor: 'rgba(117, 112, 131, 0.5)',
+        backgroundColor: '#50D2D3',
+        borderColor: '#50D2D3',
         borderWidth: 1,
         borderStyle: "solid",
         alignItems: 'center',
@@ -197,7 +215,7 @@ const styles = StyleSheet.create({
     buttonText:{
         fontSize: 16,
         fontWeight: '600',
-        color: '#FFFFFF',
+        color: '#FFF',
     }
 
 })
