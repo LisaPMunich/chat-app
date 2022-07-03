@@ -1,26 +1,34 @@
-/*
-On the start screen, add a text input field and a button as per the screen design provided in your project brief. The text input is for the user to enter their name, and the button is for them to enter the chat room (and be navigated to the chat screen).
-You can use Flexbox for your app’s layout.
-Apply the appropriate stylings to your start screen as per the handoff document. Links to the relevant React Native props can be found in the Resources section at the end of this Exercise.
-You can use the default font rather than implementing a custom font.
- */
-
 import React, {useState} from 'react';
 import {ImageBackground, StyleSheet, View, Text, TouchableOpacity, Pressable} from 'react-native';
 import {TextInput} from "react-native-paper";
 import image from "../assets/chattybetty_backgroundImage_blue.png";
 
+import { signInAnonymously } from "firebase/auth";
+import { auth } from '../config/firebase';
+
+// create color objects to set backgroundColor with press on colorButtons
+const colors = {
+    orange: '#D38333',
+    red: '#D47C76',
+    blue: '#91acd9',
+    cascara: '#F03E33',
+    lionheart:'#CF1C1E'
+}
+
 export default function Start(props) {
     const [name, setName] = useState('');
     const [color, setColor] = useState('');
+    const [isConnected, setIsConnected] = useState(false)
 
-    // create color objects to set backgroundColor with press on colorButtons
-    const colors = {
-        orange: '#D38333',
-        red: '#D47C76',
-        blue: '#91acd9',
-        cascara: '#F03E33',
-        lionheart:'#CF1C1E'
+    const onHandleStartChat = () => {
+        if(isConnected){
+            signInAnonymously(auth)
+                .then(() =>props.navigation.navigate('Chat', {name: name, color: color}))
+                .catch(err => console.log(`StartChat err: ${err}`))
+        }
+        else{
+            props.navigation.navigate('Chat', {name: name, color: color})
+        }
     }
 
     return (
@@ -95,7 +103,7 @@ export default function Start(props) {
                     {/*Pressing button navigates to Chat Screen, transferring props name and set backgroundColor*/}
                     <Pressable
                         style={styles.button}
-                        onPress={() => props.navigation.navigate('Chat', {name: name, color: color})}
+                        onPress={onHandleStartChat}
                         accessible={true}
                         accessibilityRole='button'
                         accessibilityLabel='Press me to navigate to chat screen'

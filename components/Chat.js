@@ -1,6 +1,10 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {View, StyleSheet, Text, Platform, KeyboardAvoidingView} from 'react-native';
-import {GiftedChat, Bubble, MessageText, Time} from 'react-native-gifted-chat'
+import {GiftedChat, Bubble, MessageText, Time} from 'react-native-gifted-chat';
+//Firestore Database
+import { collection, onSnapshot, query, orderBy, addDoc } from "firebase/firestore";
+
+import { auth, db } from '../config/firebase';
 
 export default function Chat(props) {
     const [messages, setMessages] = useState([]); //state to hold messages
@@ -9,35 +13,47 @@ export default function Chat(props) {
     const {color} = props.route.params;
     const {name} = props.route.params;
 
+
+    // create reference to collection on firestore to store and retrieves chat messages of users
+    useEffect(() =>{
+        const messagesCollectionRef = collection(db, 'messages');
+        const q = query(messagesCollectionRef, orderBy('createdAt', 'desc'))
+
+        const unsubscribe = onSnapshot(q, querySnapshot => {
+            setMessages(
+                querySnapshot.docs.map(doc => ({
+                    _id: doc.data()._id,
+                    createdAt: doc.data().createdAt.toDate(),
+                    text: doc.data().text,
+                    user: doc.data().user
+                }))
+            );
+        });
+        return () => unsubscribe();
+    },[]);
+
     useEffect((props) => {
         setMessages([
             {
-                _id: 1,
-                text: 'Hello developer',
-                createdAt: new Date(),
-                user: {
-                    _id: 2,
-                    name: 'Merle',
-                    avatar: 'https://placeimg.com/140/140/any',
-                },
-                sent: true,
-                received: true,
-                pending: true,
-            },
-            {
-                _id: 2,
                 text: `${name} entered the chat`,
                 createdAt: new Date(),
                 system: true,
             },
-        ])
+        ]);
     }, [])
 
     const onSend = useCallback((messages = []) => {
-        setMessages(prevMessages => GiftedChat.append(prevMessages, messages));
+        setMessages(prevMessages =>
+            GiftedChat.append(prevMessages, messages)
+        );
+        const {_id, createdAt, text, user} = messages [0];
+        addDoc(collection(db, 'messages'),{
+            _id,
+            createdAt,
+            text,
+            user
+        });
     }, [])
-
-
 
 
     function renderBubble(props) {
@@ -104,10 +120,10 @@ export default function Chat(props) {
             <Text style={styles.welcomeText}>Hi there {name}, let's chat!</Text>
             <GiftedChat
                 messages={messages}
+                showAvatarForEveryMessage={true}
                 onSend={messages => onSend(messages)}
                 user={{
-                    _id: 1,
-                    name: 'Merle',
+                    _id: name,
                     avatar: 'https://placeimg.com/140/140/any',
                 }}
                 renderBubble={renderBubble}
