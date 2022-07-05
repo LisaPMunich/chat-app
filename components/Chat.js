@@ -5,24 +5,13 @@ import {collection, onSnapshot, query, orderBy, addDoc} from "firebase/firestore
 import {auth, db} from '../config/firebase';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
-
-// store data on the client-side
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// check whether the user is online
 import NetInfo from "@react-native-community/netinfo";
 import {loadMessageFromStorage, resetMessageStorage, saveMessagesToStorage} from "../async-storage";
-import uniqueID from "react-native-web/dist/exports/StyleSheet/ReactNativePropRegistry";
 
 export default function Chat(props) {
-    const [messages, setMessagesState] = useState([]); //state to hold messages
+    const [messages, setMessages] = useState([]); //state to hold messages
     const [isOnline, setIsOnline] = useState(false); //state to hold information about online status
     const [showWelcomeMessage, setShowWelcomeMessage] = useState(true); //state to display welcome message only until user starts chatting
-
-    const setMessages = (messages) => {
-        console.log('setMessages called with', messages.length);
-        setMessagesState(messages);
-    };
 
     // Receive props name and color from the Start Screen
     const {color} = props.route.params;
@@ -59,7 +48,6 @@ export default function Chat(props) {
     }, []);
 
     useEffect(() => {
-
         // Variable to subscribe to network state updates
         let unsubscribe;
 
@@ -70,7 +58,6 @@ export default function Chat(props) {
 
             unsubscribe = onSnapshot(q, querySnapshot => {
                 console.log('Load Collection from Firebase.', querySnapshot.docs.length);
-
                 setMessages(
                     querySnapshot.docs.map(doc => ({
                         _id: doc.data()._id,
@@ -84,7 +71,8 @@ export default function Chat(props) {
             // unsubscribe snapshot listener
             return () => unsubscribe();
         } else {
-            loadMessageFromStorage().then(messageArray => setMessages(messageArray)); // IF USER IS OFFLINE GET MESSAGES FROM ASYNC STORAGE
+            loadMessageFromStorage()
+                .then(messageArray => setMessages(messageArray)); // IF USER IS OFFLINE GET MESSAGES FROM ASYNC STORAGE
         }
 
     }, [isOnline]);
@@ -103,12 +91,12 @@ export default function Chat(props) {
             createdAt: new Date(),
             system: true,
         });
-    }, [])
+    }, []);
 
 
     // add last message sent to the Firestore collection "messages"
     const addMessage = (message) => {
-        const {_id, createdAt, text, user} = message;
+        const {text} = message;
 
         if(!text){
             return;
@@ -116,18 +104,12 @@ export default function Chat(props) {
 
         console.log(message);
         try {
-            addDoc(messagesCollectionRef, {
-                _id,
-                createdAt,
-                text,
-                user
-            })
+            addDoc(messagesCollectionRef, message)
         } catch (e){
             console.error('Invalid message object', message);
             console.error(e);
         }
     }
-
 
     const onSend = useCallback((messages = []) => {
         setShowWelcomeMessage(false);
