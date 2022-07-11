@@ -148,7 +148,7 @@ export default function CustomActions(props) {
             accessibilityHint="Choose an image to send, take a picture or share your location.">
             <View
                 style={[styles.wrapper, props.wrapperStyle]}>
-                <Text stlye={[styles.iconText, props.iconTextStyle]}>+</Text>
+                <Text style={[styles.iconText, props.iconTextStyle]}>+</Text>
             </View>
         </TouchableOpacity>
     )
