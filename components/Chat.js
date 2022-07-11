@@ -4,14 +4,20 @@ import {GiftedChat, SystemMessage, Bubble, MessageText, Time, InputToolbar} from
 import {collection, onSnapshot, query, orderBy, addDoc} from "firebase/firestore";
 import {auth, db} from '../config/firebase';
 import 'react-native-get-random-values';
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 import NetInfo from "@react-native-community/netinfo";
 import {loadMessageFromStorage, resetMessageStorage, saveMessagesToStorage} from "../async-storage";
+import CustomActions from './CustomActions';
+import MapView from 'react-native-maps';
+import PropTypes from 'prop-types';
+
 
 export default function Chat(props) {
-    const [messages, setMessages] = useState([]); //state to hold messages
-    const [isOnline, setIsOnline] = useState(false); //state to hold information about online status
-    const [showWelcomeMessage, setShowWelcomeMessage] = useState(true); //state to display welcome message only until user starts chatting
+    const [messages, setMessages] = useState([]);
+    const [isOnline, setIsOnline] = useState(false);
+    const [showWelcomeMessage, setShowWelcomeMessage] = useState(true);
+    const [image, setImage] =useState(null);
+    const [location, setLocation] = useState(null);
 
     // Receive props name and color from the Start Screen
     const {color} = props.route.params;
@@ -19,11 +25,11 @@ export default function Chat(props) {
 
     const messagesCollectionRef = collection(db, 'messages');
 
-    // WHEN USER OFFLINE, LOAD/DISPLAY MESSAGES FROM ASYNCSTORAGE
+
+    //Get the network state once, at the first initialization
     useEffect(() => {
-        // Get the network state once, at the first initialization
         NetInfo.fetch().then(netInfoStatus => {
-            console.log('NetInfo Init -- ',netInfoStatus.isConnected);
+            console.log('NetInfo Init -- ', netInfoStatus.isConnected);
             if (netInfoStatus.isConnected) {
                 setIsOnline(true);
             } else {
@@ -33,7 +39,7 @@ export default function Chat(props) {
 
         // Subscribe to network changes
         const unsubscribe = NetInfo.addEventListener(netInfoStatus => {
-            console.log('NetInfo -- ',netInfoStatus.isConnected);
+            console.log('NetInfo -- ', netInfoStatus.isConnected);
             if (netInfoStatus.isConnected) {
                 setIsOnline(true);
             } else {
@@ -47,24 +53,29 @@ export default function Chat(props) {
         }
     }, []);
 
+    // IF USER IS ONLINE, get messages from firestore, if user offline get messages from cache using async storage
     useEffect(() => {
         // Variable to subscribe to network state updates
         let unsubscribe;
 
-        // IF USER IS ONLINE, get messages from firestore, if user offline get messages from cache using async storage
+
         if (isOnline) {
             const messagesCollectionRef = collection(db, 'messages');
             const q = query(messagesCollectionRef, orderBy('createdAt', 'desc'))
 
             unsubscribe = onSnapshot(q, querySnapshot => {
                 console.log('Load Collection from Firebase.', querySnapshot.docs.length);
-                setMessages(
-                    querySnapshot.docs.map(doc => ({
-                        _id: doc.data()._id,
-                        createdAt: doc.data().createdAt.toDate(),
-                        text: doc.data().text,
-                        user: doc.data().user
-                    }))
+                const msg = querySnapshot.docs.map(doc => ({
+                    _id: doc.data()._id,
+                    createdAt: doc.data().createdAt.toDate(),
+                    text: doc.data().text,
+                    user: doc.data().user,
+                    image: doc.data().image || null,
+                    location: doc.data().location || null,
+                }))
+                console.log('messages type', typeof msg)
+                setMessages(msg
+
                 );
             });
 
@@ -85,12 +96,12 @@ export default function Chat(props) {
     // resetMessageStorage();
 
     useEffect((props) => {
-        setMessages({
+        setMessages([{
             _id: uuidv4(),
             text: `${name} entered the chat.`,
             createdAt: new Date(),
             system: true,
-        });
+        }]);
     }, []);
 
 
@@ -98,14 +109,14 @@ export default function Chat(props) {
     const addMessage = (message) => {
         const {text} = message;
 
-        if(!text){
+        if (!text) {
             return;
         }
 
         console.log(message);
         try {
             addDoc(messagesCollectionRef, message)
-        } catch (e){
+        } catch (e) {
             console.error('Invalid message object', message);
             console.error(e);
         }
@@ -183,7 +194,7 @@ export default function Chat(props) {
 
     // Hide input toolbar if user is offline
     function renderInputToolbar(props) {
-        if(!isOnline){
+        if (!isOnline) {
             return null;
         }
         return (
@@ -192,6 +203,34 @@ export default function Chat(props) {
             />
         )
     }
+
+    function renderCustomActions(props) {
+        return <CustomActions {...props} />
+    }
+
+    function renderCustomView(props) {
+        const {currentMessage} = props;
+        if (currentMessage.location) {
+            return (
+                <MapView
+                    style={{
+                        width: 150,
+                        height: 100,
+                        borderRadius: 13,
+                        margin: 3
+                    }}
+                    region={{
+                        latitude: currentMessage.location.latitude,
+                        longitude: currentMessage.location.longitude,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421,
+                    }}
+                />
+            );
+        }
+        return null;
+    }
+
 
     return (
         <View style={[{backgroundColor: color}, styles.container]}>
@@ -206,6 +245,8 @@ export default function Chat(props) {
                 }}
                 renderBubble={renderBubble}
                 renderInputToolbar={renderInputToolbar}
+                renderActions={renderCustomActions}
+                renderCustomView={renderCustomView}
             />
             {/*Ternary solves issue on older Android phones, that message field hides, when user types on keyboard */}
             {
@@ -213,6 +254,16 @@ export default function Chat(props) {
             }
         </View>
     )
+}
+
+Chat.propTypes = {
+    messages: PropTypes.array,
+    onSend: PropTypes.func,
+    user: PropTypes.object,
+    renderBubble: PropTypes.func,
+    renderInputToolbar: PropTypes.func,
+    renderActions: PropTypes.func,
+    renderCustomView: PropTypes.func,
 }
 
 const styles = StyleSheet.create({
