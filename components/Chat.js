@@ -107,15 +107,9 @@ export default function Chat(props) {
 
     // add last message sent to the Firestore collection "messages"
     const addMessage = (message) => {
-        const {text} = message;
-
-        if (!text) {
-            return;
-        }
-
-        console.log(message);
         try {
             addDoc(messagesCollectionRef, message)
+            console.info('Saved message to Firebase.');
         } catch (e) {
             console.error('Invalid message object', message);
             console.error(e);

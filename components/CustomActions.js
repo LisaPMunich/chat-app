@@ -7,7 +7,7 @@ import * as Location from 'expo-location';
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import {storage} from "../config/firebase";
-import {ref, uploadBytes} from 'firebase/storage';
+import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
 
 
 export default function CustomActions(props) {
@@ -16,32 +16,22 @@ export default function CustomActions(props) {
 
     // upload images to firebase storage
     async function uploadImage(uri) {
-        const blob = await new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.onload = function () {
-                resolve(xhr.response);
-            };
-            xhr.onerror = function (e) {
-                console.log(e);
-                reject(new TypeError('Network request failed'));
-            };
-            xhr.responseType = 'blob';
-            xhr.open('GET', uri, true);
-            xhr.send(null);
-        });
+        const img = await fetch(uri)
+        const imgBlob = await img.blob();
 
         const imageNameBefore = uri.split('/');
         const imageName = imageNameBefore[imageNameBefore.length - 1];
 
         const storageRef = ref(storage, `images/${imageName}`);
-        const snapshot = await storageRef.put(blob);
-        uploadBytes(storageRef, blob).then(snapshot => {
-            return snapshot.ref.
-        })
 
-        blob.close();
+        return uploadBytes(storageRef, imgBlob)
+            .then(async snapshot => {
+                imgBlob.close();
+                return getDownloadURL(snapshot.ref).then(url => {
 
-        return await snapshot.ref.getDownloadURL();
+                    return url;
+                });
+            });
     }
 
     // pick image from the smartphone image library after permission is given
@@ -54,9 +44,11 @@ export default function CustomActions(props) {
                 const result = await ImagePicker.launchImageLibraryAsync({
                     mediaTypes: ImagePicker.MediaTypeOptions.Images
                 }).catch((error) => console.error(error));
+
                 // if not cancelled, upload and send image
                 if (!result.cancelled) {
                     const imageUrl = await uploadImage(result.uri);
+
                     props.onSend({image: imageUrl});
                 }
             }
@@ -68,7 +60,7 @@ export default function CustomActions(props) {
     // take photo with smartphone camera
     async function takePhoto() {
         // permission to use camera?
-        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        const {status} = await ImagePicker.requestCameraPermissionsAsync();
         try {
             // launch camera, if permission granted
             if (status === 'granted') {
@@ -78,7 +70,9 @@ export default function CustomActions(props) {
                 // if action is not cancelled, upload and send image
                 if (!result.cancelled) {
                     const imageUrl = await uploadImage(result.uri);
-                    props.onSend({ image: imageUrl });
+
+                    props.onSend({image: imageUrl});
+                    console.log('props.onSend triggered', imageUrl);
                 }
             }
         } catch (error) {
@@ -90,7 +84,7 @@ export default function CustomActions(props) {
     // get location of user via GPS
     async function getLocation() {
         //permission to access current location?
-        const { status } = await Location.requestForegroundPermissionsAsync();
+        const {status} = await Location.requestForegroundPermissionsAsync();
         try {
             // if permission is granted, get location
             if (status === 'granted') {
