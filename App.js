@@ -8,7 +8,6 @@ import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from "@react-navigation/stack";
 import {ActivityIndicator, View} from "react-native";
-import CustomActions from './components/CustomActions';
 
 
 // create React Navigator

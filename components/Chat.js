@@ -1,12 +1,12 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {View, StyleSheet, Text, Platform, KeyboardAvoidingView} from 'react-native';
-import {GiftedChat, SystemMessage, Bubble, MessageText, Time, InputToolbar} from 'react-native-gifted-chat';
+import {GiftedChat, Bubble, MessageText, Time, InputToolbar} from 'react-native-gifted-chat';
 import {collection, onSnapshot, query, orderBy, addDoc} from "firebase/firestore";
 import {auth, db} from '../config/firebase';
 import 'react-native-get-random-values';
 import {v4 as uuidv4} from 'uuid';
 import NetInfo from "@react-native-community/netinfo";
-import {loadMessageFromStorage, resetMessageStorage, saveMessagesToStorage} from "../async-storage";
+import {loadMessageFromStorage, saveMessagesToStorage} from "../async-storage";
 import CustomActions from './CustomActions';
 import MapView from 'react-native-maps';
 import PropTypes from 'prop-types';
