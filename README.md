@@ -1,6 +1,6 @@
 # React Native Chat App "ChattyBetty"
 
-<img src="https://user-images.githubusercontent.com/99111208/178363817-b190645e-d0ee-436f-bf36-4cec031be7d1.jpg" width="500"/>
+<img src="https://user-images.githubusercontent.com/99111208/178363817-b190645e-d0ee-436f-bf36-4cec031be7d1.jpg" width="600"/>
 
 (image source chatting girls: pngtree)
 
@@ -59,7 +59,7 @@ Install the Expo app on your mobile device (available in Google Play Store and A
 
 ### Dependencies
 
-![Screenshot 2022-07-12 at 10 30 15](https://user-images.githubusercontent.com/99111208/178446522-299b8c45-1c8f-43d3-b0d3-fe4c1e720ee6.png)
+![Screenshot 2022-07-12 at 10 30 15](https://user-images.githubusercontent.com/99111208/178494171-445dff91-1ecd-43c4-9a3c-0ca9b3fcd848.png)
 
 ### Install and connect to own database - step-by-step
 
@@ -126,6 +126,10 @@ service firebase.storage {
 Whenever offline the messages in the chat disappeared, because AsyncStorage has been extracted from react-native core, and I had to install and import @react-native-async-storage/async-storage instead of react-native
 [See more information on GitHub](https://github.com/react-native-async-storage/async-
 storage)
+
+### ... from working with Expo
+
+Repeatedly the expo web browser did not open because of dependency issues with packages from react native. For example: Expo required me to use more outdated versions of @react-native-community/netinfo as well as react-native-maps to be compatible with Expo.
 
 
 ### ... from the whole project
